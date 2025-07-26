@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <title>PAYMENT</title>
+  <link rel="shortcut icon" href="https://png.pngtree.com/png-vector/20231211/ourmid/pngtree-payment-icon-income-png-image_10858293.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap');
+    body {
+      font-family: 'Noto Sans Bengali', sans-serif;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #28aa26;
+      text-align: center;
+    }
+
+    form, .receipt {
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 0 30px rgba(9, 219, 19, 0.562);
+      border-radius: 10px;
+      max-width: 600px;
+      width: 95%;
+      box-sizing: border-box;
+    }
+
+    input {
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #00fa0d;
+      font-size: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .products {
+      margin-top: 15px;
+      border: 1px solid #21cf38;
+      border-radius: 8px;
+      padding: 10px;
+      background: #eaf0eebd;
+    }
+
+    .product-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .product-row > input {
+      flex: 1;
+    }
+
+    .product-row button {
+      background: #ff0000;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      height: 30px;
+      width: 30px;
+      font-weight: bold;
+      font-size: 20px;
+      margin-top: 8px;
+    }
+
+    .add-product-btn {
+      margin-top: 10px;
+      background: #07ea56;
+      border: none;
+      color: white;
+      padding: 10px;
+      width: 100%;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button[type="submit"] {
+      margin-top: 20px;
+      background: #04e740;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .receipt {
+      display: none;
+      margin-top: 25px;
+      border: 2px dashed #00ff37;
+      padding: 15px;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .receipt table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .receipt th, .receipt td {
+      border: 1px solid #0288d1;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .download-btn {
+      margin-top: 15px;
+      background-color: #0ce136;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    .download-btn:hover {
+      background-color: #45a049;
+    }
+
+    /* ✅ মোবাইলের জন্য Fixed Height-Width (Samsung M12 approx size) */
+    @media screen and (max-width: 768px) {
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+      }
+
+      form, .receipt {
+        width: 100%;
+        max-height: 95vh;
+        overflow-y: auto;
+        box-sizing: border-box;
+        padding: 15px;
+      }
+
+      .product-row {
+        flex-direction: column;
+      }
+
+      .product-row > input,
+      .product-row > button {
+        width: 100%;
+        margin-top: 5px;
+      }
+
+      .download-btn {
+        font-size: 15px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div style="display: flex; justify-content: center; align-items: center;text-align: center;">
+    <h2>
+      ভাই-ভাই ফটোস্ট্যাট এন্ড কম্পিউটার ট্রেনিং সেন্টার <br>
+    </h2>
+  </div>
+  <form id="paymentForm">
+    <input type="text" id="name" placeholder="পূর্ণ নাম" required />
+    <input type="text" id="father" placeholder="পিতার নাম" required />
+    <input type="text" id="village" placeholder="গ্রামের নাম" required />
+    <input type="text" id="number" placeholder="মোবাইল নম্বর" required />
+
+    <div class="products" id="productsList">
+      <div class="product-row">
+        <input type="text" placeholder="পণ্যের নাম" class="product-name" />
+        <input type="number" min="1" value="1" class="product-qty" placeholder="পরিমাণ" />
+        <input type="number" min="0" step="0.01" value="0" class="product-price" placeholder="প্রতি এককের দাম (BDT)" />
+        <button type="button" class="remove-btn" title="পণ্য মুছে ফেলুন">x</button>
+      </div>
+    </div>
+
+    <button type="button" class="add-product-btn" id="addProductBtn">নতুন পণ্য যোগ করুন +</button>
+
+    <label>মোট মূল্য (BDT)</label>
+    <input type="text" id="total" readonly style="background:#ddd;" />
+
+    <label>পূর্বের বাকি (BDT)</label>
+    <input type="number" id="previousDue" placeholder="পূর্বের বাকি (ঐচ্ছিক)" />
+
+    <label>জমা টাকা (BDT)</label>
+    <input type="number" id="paid" placeholder="জমা টাকা" required />
+
+    <label>বর্তমান বাকি (BDT)</label>
+    <input type="text" id="currentDue" readonly style="background:#eee; font-weight: bold;" />
+
+    <button type="submit">সাবমিট করুন</button><br><br>
+
+    <div style="display: flex; justify-content: center; align-items: center; font-family: Arial, sans-serif; font-size: 14px; padding: 10px;">
+      © ২০২৫ Developer:
+      <a href="https://cybercop-404.github.io/" target="_blank" style="margin-left: 5px; color: blue; text-decoration: none;">MD. NAHIDUL ISLAM</a>
+    </div>
+  </form>
+
+  <div class="receipt" id="receipt">
+    <h3 style="text-align: center;">পেমেন্ট রশিদ</h3>
+    <p><strong>ক্রেতার নাম:</strong> <span id="rName"></span></p>
+    <p><strong>পিতার নাম:</strong> <span id="rFather"></span></p>
+    <p><strong>গ্রামের নাম:</strong> <span id="rvillage"></span></p>
+    <p><strong>মোবাইল নম্বর:</strong> <span id="rNumber"></span></p>
+    <p><strong>পণ্যসমূহ:</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>পণ্যের নাম</th>
+          <th>পরিমাণ</th>
+          <th>প্রতি এককের দাম (BDT)</th>
+          <th>মোট (BDT)</th>
+        </tr>
+      </thead>
+      <tbody id="rProductsTableBody"></tbody>
+      <tfoot>
+        <tr>
+          <th colspan="3" style="text-align:left;">সর্বমোট</th>
+          <th id="rTotal"></th>
+        </tr>
+        <tr>
+          <th colspan="3" style="text-align:left;">পূর্বের বাকি</th>
+          <th id="rPreviousDue"></th>
+        </tr>
+        <tr>
+          <th colspan="3" style="text-align:left;">জমা</th>
+          <th id="rPaid"></th>
+        </tr>
+        <tr>
+          <th colspan="3" style="text-align:left;">বর্তমান বাকি</th>
+          <th id="rCurrentDue"></th>
+        </tr>
+      </tfoot>
+    </table>
+    <p><strong>তারিখ ও সময়:</strong> <span id="rDate"></span></p>
+
+    <p style="margin-top: 15px; font-size: 14px; line-height: 1.5;">
+      <strong>দোকানের তথ্য:</strong><br/>
+      ভাই-ভাই ফটোস্ট্যাট এন্ড কম্পিউটার ট্রেনিং সেন্টার<br/>
+      করিমপুর ট্রেনিং সেন্টার<br/>
+      করিমপুর রেলগেট বাজার<br/>
+      আব্দুলপুর, লালপুর, নাটোর।<br/>
+      ফোন: ০১৭২৯৩৬১২৬০
+    </p>
+
+    <div style="display: flex; justify-content: end; align-items: end; font-family: Arial, sans-serif; font-size: 14px; padding: 10px;">
+      © ২০২৫ Developer:
+      <a href="https://cybercop-404.github.io/" target="_blank" style="margin-left: 5px; color: rgb(0, 0, 0); text-decoration: none;">MD. NAHIDUL ISLAM</a>
+    </div>
+
+    <button class="download-btn" onclick="downloadReceipt()">রশিদ ডাউনলোড করুন</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const productsList = document.getElementById('productsList');
+    const addProductBtn = document.getElementById('addProductBtn');
+    const totalInput = document.getElementById('total');
+    const currentDueInput = document.getElementById('currentDue');
+
+    function addProductRow() {
+      const div = document.createElement('div');
+      div.className = 'product-row';
+      div.innerHTML = `
+        <input type="text" placeholder="পণ্যের নাম" class="product-name" />
+        <input type="number" min="1" value="1" class="product-qty" placeholder="পরিমাণ" />
+        <input type="number" min="0" step="0.01" value="0" class="product-price" placeholder="প্রতি এককের দাম (BDT)" />
+        <button type="button" class="remove-btn" title="পণ্য মুছে ফেলুন">×</button>
+      `;
+      productsList.appendChild(div);
+      div.querySelector('.remove-btn').addEventListener('click', () => {
+        div.remove();
+        calculateTotal();
+      });
+      div.querySelector('.product-qty').addEventListener('input', calculateTotal);
+      div.querySelector('.product-price').addEventListener('input', calculateTotal);
+    }
+
+    productsList.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.target.parentElement.remove();
+        calculateTotal();
+      });
+    });
+
+    function calculateTotal() {
+      let total = 0;
+      const productRows = document.querySelectorAll('.product-row');
+      productRows.forEach(row => {
+        const pname = row.querySelector('.product-name').value.trim();
+        if (!pname) return;
+        const qty = parseFloat(row.querySelector('.product-qty').value) || 0;
+        const price = parseFloat(row.querySelector('.product-price').value) || 0;
+        total += qty * price;
+      });
+      totalInput.value = total.toFixed(2);
+      updateCurrentDue();
+    }
+
+    function updateCurrentDue() {
+      const total = parseFloat(totalInput.value) || 0;
+      const previousDue = parseFloat(document.getElementById('previousDue').value) || 0;
+      const paid = parseFloat(document.getElementById('paid').value) || 0;
+      const currentDue = total + previousDue - paid;
+      currentDueInput.value = currentDue.toFixed(2);
+    }
+
+    addProductBtn.addEventListener('click', addProductRow);
+    productsList.addEventListener('input', calculateTotal);
+    document.getElementById('previousDue').addEventListener('input', updateCurrentDue);
+    document.getElementById('paid').addEventListener('input', updateCurrentDue);
+    calculateTotal();
+
+    const form = document.getElementById('paymentForm');
+    const receipt = document.getElementById('receipt');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const father = document.getElementById('father').value.trim();
+      const village = document.getElementById('village').value.trim();
+      const number = document.getElementById('number').value.trim();
+      const paid = document.getElementById('paid').value.trim();
+      const previousDue = document.getElementById('previousDue').value.trim();
+
+      const products = [];
+      const productRows = document.querySelectorAll('.product-row');
+      for (const row of productRows) {
+        const pname = row.querySelector('.product-name').value.trim();
+        if (!pname) continue;
+        const qty = parseInt(row.querySelector('.product-qty').value) || 0;
+        const price = parseFloat(row.querySelector('.product-price').value) || 0;
+        if (qty > 0 && price >= 0) {
+          products.push({ pname, qty, price, subtotal: (qty * price).toFixed(2) });
+        }
+      }
+
+      const total = products.reduce((acc, p) => acc + parseFloat(p.subtotal), 0).toFixed(2);
+      const paidAmount = parseFloat(paid) || 0;
+      const previousDueAmount = parseFloat(previousDue) || 0;
+      const currentDue = (parseFloat(total) + previousDueAmount - paidAmount).toFixed(2);
+      const date = new Date().toLocaleString();
+
+      document.getElementById('rName').innerText = name;
+      document.getElementById('rFather').innerText = father;
+      document.getElementById('rvillage').innerText = village;
+      document.getElementById('rNumber').innerText = number;
+      document.getElementById('rTotal').innerText = total;
+      document.getElementById('rPaid').innerText = paidAmount.toFixed(2);
+      document.getElementById('rPreviousDue').innerText = previousDueAmount.toFixed(2);
+      document.getElementById('rCurrentDue').innerText = currentDue;
+      document.getElementById('rDate').innerText = date;
+
+      const tbody = document.getElementById('rProductsTableBody');
+      tbody.innerHTML = '';
+      products.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.pname}</td>
+          <td>${p.qty}</td>
+          <td>${parseFloat(p.price).toFixed(2)}</td>
+          <td>${p.subtotal}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      receipt.style.display = 'block';
+      form.reset();
+      productsList.innerHTML = '';
+      addProductRow();
+      calculateTotal();
+    });
+
+    function downloadReceipt() {
+      const downloadBtn = document.querySelector('.download-btn');
+      downloadBtn.style.color = '#fff';
+      downloadBtn.style.backgroundColor = '#fff';
+
+      setTimeout(() => {
+        html2canvas(document.querySelector("#receipt")).then(canvas => {
+          const link = document.createElement("a");
+          link.download = "sales_receipt.png";
+          link.href = canvas.toDataURL();
+          link.click();
+          downloadBtn.style.color = '';
+          downloadBtn.style.backgroundColor = '#4caf50';
+        });
+      }, 100);
+    }
+  </script>
+</body>
+</html>
